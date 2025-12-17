@@ -111,5 +111,3 @@ def main():
     st.sidebar.info("Adjust the parameters to see how they impact the predicted salary.")
 
 
-if _name_ == '_main_':
-    main()
