@@ -3,46 +3,52 @@ import pandas as pd
 import pickle
 import os
 
-st.set_page_config(page_title="Salary Prediction App", layout="centered")
-
+# -----------------------------
+# Page Config
+# -----------------------------
+st.set_page_config(page_title="Salary Prediction Project", layout="centered")
 st.title("📊 Salary Prediction App")
+
+# -----------------------------
+# File Checks
+# -----------------------------
+MODEL_FILE = "Linear Regression.pkl"
+DATA_FILE = "linear_regression_dataset.csv"
+
+if not os.path.exists(MODEL_FILE):
+    st.error("❌ Linear Regression.pkl not found. Keep it in the same folder as app.py")
+    st.stop()
+
+if not os.path.exists(DATA_FILE):
+    st.error("❌ linear_regression_dataset.csv not found. Keep it in the same folder as app.py")
+    st.stop()
 
 # -----------------------------
 # Load Model
 # -----------------------------
 @st.cache_resource
 def load_model():
-    with open("Student_model.pkl", "rb") as f:
+    with open(MODEL_FILE, "rb") as f:
         return pickle.load(f)
+
+model = load_model()
 
 # -----------------------------
 # Load Dataset
 # -----------------------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("Employee_clean_Data.csv")
+    return pd.read_csv(DATA_FILE)
 
-# -----------------------------
-# Check files
-# -----------------------------
-if not os.path.exists("Student_model.pkl"):
-    st.error("❌ Student_model.pkl not found in project folder")
-    st.stop()
-
-if not os.path.exists("Employee_clean_Data.csv"):
-    st.error("❌ Employee_clean_Data.csv not found in project folder")
-    st.stop()
-
-model = load_model()
 df = load_data()
 
 st.subheader("📂 Dataset Preview")
 st.dataframe(df.head())
 
 # -----------------------------
-# Detect feature columns
+# Feature & Target Detection
 # -----------------------------
-# Assume last column is TARGET
+# Assumption: last column is target
 feature_columns = df.columns[:-1]
 target_column = df.columns[-1]
 
@@ -53,12 +59,12 @@ input_data = {}
 for col in feature_columns:
     if df[col].dtype == "object":
         input_data[col] = st.selectbox(
-            col,
-            options=df[col].unique()
+            f"{col}",
+            df[col].unique()
         )
     else:
         input_data[col] = st.number_input(
-            col,
+            f"{col}",
             value=float(df[col].mean())
         )
 
@@ -72,4 +78,4 @@ if st.button("Predict"):
         prediction = model.predict(input_df)[0]
         st.success(f"🎯 Predicted {target_column}: **{prediction}**")
     except Exception as e:
-        st.error(f"❌ Prediction failed: {e}")
+        st.error(f"❌ Prediction error: {e}")
