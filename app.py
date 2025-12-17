@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 # --- Constants ---
-MODEL_PATH = 'Linear_Regression.pkl'
+MODEL_PATH = 'Linear_Regression pkl.pkl'
 # Note: For deployment in an environment like Streamlit Cloud, the file
 # must be in the same directory as the app.py or in a path accessible to it.
 
